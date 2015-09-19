@@ -1,13 +1,13 @@
 {
   "uuid": "5e5ee1cf-fe67-4ca1-9568-1c5d1dd77ec6",
-  "shortName": "chicken-o-clock",
+  "shortName": "cluck",
   "longName": "chicken-o-clock",
-  "companyName": "MakeAwesomeHappen",
+  "companyName": "Fifth Postulate",
   "versionLabel": "1.0",
   "sdkVersion": "3",
   "targetPlatforms": ["aplite", "basalt"],
   "watchapp": {
-    "watchface": false
+    "watchface": true
   },
   "appKeys": {
     "dummy": 0
