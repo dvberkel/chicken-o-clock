@@ -4,12 +4,12 @@ static Window *main_window;
 static TextLayer *time_layer;
 
 static void time_layer_create(){
-  time_layer = text_layer_create(GRect(0, 55, 144, 50));
+  time_layer = text_layer_create(GRect(0, 148, 144, 20));
   text_layer_set_background_color(time_layer, GColorClear);
   text_layer_set_text_color(time_layer, GColorBlack);
   text_layer_set_text(time_layer, "00:00");
 
-  text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
+  text_layer_set_font(time_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
 }
 
