@@ -16,6 +16,8 @@ typedef struct Chicken {
   int tail_height;
   int beak_size;
   int beak_angle;
+  int eye_size;
+  int left_eye;
 } Chicken;
 
 static Chicken chicken = {
@@ -24,7 +26,9 @@ static Chicken chicken = {
   .radius = 40,
   .tail_height = 40,
   .beak_size = 15,
-  .beak_angle = TRIG_MAX_ANGLE/20
+  .beak_angle = TRIG_MAX_ANGLE/20,
+  .eye_size = 3,
+  .left_eye = 30
 };
 
 static void time_layer_create(){
@@ -91,7 +95,6 @@ static void battery_layer_destroy(){
 
 static void chicken_draw(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
-  graphics_context_set_fill_color(ctx, GColorWhite);
 
   GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
   GPoint tail_tip = GPoint(chicken.x + chicken.radius, chicken.y - chicken.tail_height);
@@ -116,6 +119,12 @@ static void chicken_draw(Layer *layer, GContext *ctx){
   graphics_draw_line(ctx, beak_tip, beak_end);
 
   GPoint origin = GPoint(chicken.x, chicken.y);
+
+  GPoint left_eye = GPoint(chicken.x - chicken.left_eye, chicken.y - chicken.eye_size);
+  GPoint right_eye = GPoint(chicken.x - chicken.left_eye + 2 * chicken.eye_size, chicken.y - chicken.eye_size);
+
+  graphics_fill_circle(ctx, left_eye, chicken.eye_size);
+  graphics_fill_circle(ctx, right_eye, chicken.eye_size);
 
   graphics_draw_circle(ctx, origin, chicken.radius);
 }
