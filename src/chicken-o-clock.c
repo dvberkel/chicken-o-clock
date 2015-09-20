@@ -13,9 +13,10 @@ typedef struct Chicken {
   int x;
   int y;
   int radius;
+  int tail_height;
 } Chicken;
 
-static Chicken chicken = { .x = 72, .y = 72, .radius = 40 };
+static Chicken chicken = { .x = 72, .y = 72, .radius = 40, .tail_height = 40 };
 
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
@@ -81,9 +82,17 @@ static void battery_layer_destroy(){
 
 static void chicken_draw(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
+  graphics_context_set_fill_color(ctx, GColorWhite);
 
   GPoint origin = GPoint(chicken.x, chicken.y);
+  GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
+  GPoint tail_tip = GPoint(chicken.x + chicken.radius, chicken.y - chicken.tail_height);
+  GPoint tail_end = GPoint(chicken.x, chicken.y);
 
+  graphics_draw_line(ctx, tail_start, tail_tip);
+  graphics_draw_line(ctx, tail_tip, tail_end);
+
+  graphics_fill_circle(ctx, origin, chicken.radius);
   graphics_draw_circle(ctx, origin, chicken.radius);
 }
 
