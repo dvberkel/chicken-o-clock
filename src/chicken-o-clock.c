@@ -4,6 +4,7 @@ static Window *main_window;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *week_layer;
+static Layer *battery_layer;
 
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
@@ -47,6 +48,22 @@ static void week_layer_destroy(){
   text_layer_destroy(week_layer);
 }
 
+static void battery_level_draw(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_rect(ctx, bounds, 1, GCornersAll);
+}
+
+static void battery_layer_create(){
+  battery_layer = layer_create(GRect(0, 145, 144, 2));
+  layer_set_update_proc(battery_layer, battery_level_draw);
+}
+
+static void battery_layer_destroy(){
+  layer_destroy(battery_layer);
+}
+
 static void update_time(){
   time_t current_time = time(NULL);
   struct tm *tick_time = localtime(&current_time);
@@ -87,15 +104,18 @@ static void main_window_load(){
   time_layer_create();
   date_layer_create();
   week_layer_create();
+  battery_layer_create();
 
   update();
 
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(time_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(week_layer));
+  layer_add_child(window_get_root_layer(main_window), battery_layer);
 }
 
 static void main_window_unload(){
+  battery_layer_destroy();
   week_layer_destroy();
   date_layer_destroy();
   time_layer_destroy();
