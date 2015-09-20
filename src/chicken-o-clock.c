@@ -3,6 +3,7 @@
 static Window *main_window;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
+static TextLayer *week_layer;
 
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
@@ -32,6 +33,20 @@ static void date_layer_destroy(){
   text_layer_destroy(date_layer);
 }
 
+static void week_layer_create(){
+  week_layer = text_layer_create(GRect(0, 148, 48, 20));
+  text_layer_set_background_color(week_layer, GColorClear);
+  text_layer_set_text_color(week_layer, GColorBlack);
+  text_layer_set_text(week_layer, "00-00");
+
+  text_layer_set_font(week_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(week_layer, GTextAlignmentLeft);
+}
+
+static void week_layer_destroy(){
+  text_layer_destroy(week_layer);
+}
+
 static void update_time(){
   time_t current_time = time(NULL);
   struct tm *tick_time = localtime(&current_time);
@@ -55,15 +70,18 @@ static void update_date(){
 static void main_window_load(){
   time_layer_create();
   date_layer_create();
+  week_layer_create();
 
   update_time();
   update_date();
 
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(time_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
+  layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(week_layer));
 }
 
 static void main_window_unload(){
+  week_layer_destroy();
   date_layer_destroy();
   time_layer_destroy();
 }
