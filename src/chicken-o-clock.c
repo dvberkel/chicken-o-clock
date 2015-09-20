@@ -95,7 +95,11 @@ static void chicken_draw(Layer *layer, GContext *ctx){
 
   GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
   GPoint tail_tip = GPoint(chicken.x + chicken.radius, chicken.y - chicken.tail_height);
-  GPoint tail_end = GPoint(chicken.x, chicken.y);
+
+  int tail_angle = atan2_lookup(chicken.radius, tail_tip.y);
+  GPoint tail_end = GPoint(
+    chicken.x + chicken.radius * cos_lookup(tail_angle)/TRIG_MAX_RATIO,
+    chicken.y - chicken.radius * sin_lookup(tail_angle)/TRIG_MAX_RATIO);
 
   graphics_draw_line(ctx, tail_start, tail_tip);
   graphics_draw_line(ctx, tail_tip, tail_end);
@@ -113,7 +117,6 @@ static void chicken_draw(Layer *layer, GContext *ctx){
 
   GPoint origin = GPoint(chicken.x, chicken.y);
 
-  graphics_fill_circle(ctx, origin, chicken.radius);
   graphics_draw_circle(ctx, origin, chicken.radius);
 }
 
