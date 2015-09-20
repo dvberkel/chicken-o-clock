@@ -77,14 +77,18 @@ static void update_week(){
   text_layer_set_text(week_layer, buffer);
 }
 
+static void update(){
+  update_time();
+  update_date();
+  update_week();
+}
+
 static void main_window_load(){
   time_layer_create();
   date_layer_create();
   week_layer_create();
 
-  update_time();
-  update_date();
-  update_week();
+  update();
 
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(time_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
@@ -98,9 +102,7 @@ static void main_window_unload(){
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed){
-  update_time();
-  update_date();
-  update_week();
+  update();
 }
 
 static void init(){
