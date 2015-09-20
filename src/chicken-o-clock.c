@@ -14,9 +14,18 @@ typedef struct Chicken {
   int y;
   int radius;
   int tail_height;
+  int beak_size;
+  int beak_angle;
 } Chicken;
 
-static Chicken chicken = { .x = 72, .y = 72, .radius = 40, .tail_height = 40 };
+static Chicken chicken = {
+  .x = 72,
+  .y = 72,
+  .radius = 40,
+  .tail_height = 40,
+  .beak_size = 15,
+  .beak_angle = TRIG_MAX_ANGLE/20
+};
 
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
@@ -84,13 +93,25 @@ static void chicken_draw(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
   graphics_context_set_fill_color(ctx, GColorWhite);
 
-  GPoint origin = GPoint(chicken.x, chicken.y);
   GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
   GPoint tail_tip = GPoint(chicken.x + chicken.radius, chicken.y - chicken.tail_height);
   GPoint tail_end = GPoint(chicken.x, chicken.y);
 
   graphics_draw_line(ctx, tail_start, tail_tip);
   graphics_draw_line(ctx, tail_tip, tail_end);
+
+  GPoint beak_start = GPoint(chicken.x - chicken.radius, chicken.y);
+  GPoint beak_tip = GPoint(
+    chicken.x - ((chicken.radius + chicken.beak_size) * cos_lookup(chicken.beak_angle))/TRIG_MAX_RATIO,
+    chicken.y + ((chicken.radius + chicken.beak_size) * sin_lookup(chicken.beak_angle))/TRIG_MAX_RATIO);
+  GPoint beak_end = GPoint(
+    chicken.x - (chicken.radius * cos_lookup(2 * chicken.beak_angle))/TRIG_MAX_RATIO,
+    chicken.y + (chicken.radius * sin_lookup(2 * chicken.beak_angle))/TRIG_MAX_RATIO);
+
+  graphics_draw_line(ctx, beak_start, beak_tip);
+  graphics_draw_line(ctx, beak_tip, beak_end);
+
+  GPoint origin = GPoint(chicken.x, chicken.y);
 
   graphics_fill_circle(ctx, origin, chicken.radius);
   graphics_draw_circle(ctx, origin, chicken.radius);
