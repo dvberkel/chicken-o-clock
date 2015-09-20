@@ -72,7 +72,12 @@ static void battery_layer_destroy(){
 }
 
 static void chicken_draw(Layer *layer, GContext *ctx){
-  /* nothing to see here */
+  GRect bounds = layer_get_bounds(layer);
+
+  GPoint origin = GPoint(72, 145 - 72);
+  int radius = 40;
+
+  graphics_draw_circle(ctx, origin, radius);
 }
 
 static void chicken_layer_create(){
