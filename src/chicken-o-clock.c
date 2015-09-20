@@ -2,9 +2,10 @@
 
 static Window *main_window;
 static TextLayer *time_layer;
+static TextLayer *date_layer;
 
 static void time_layer_create(){
-  time_layer = text_layer_create(GRect(0, 148, 144, 20));
+  time_layer = text_layer_create(GRect(48, 148, 48, 20));
   text_layer_set_background_color(time_layer, GColorClear);
   text_layer_set_text_color(time_layer, GColorBlack);
   text_layer_set_text(time_layer, "00:00");
@@ -17,6 +18,19 @@ static void time_layer_destroy(){
   text_layer_destroy(time_layer);
 }
 
+static void date_layer_create(){
+  date_layer = text_layer_create(GRect(96, 148, 48, 20));
+  text_layer_set_background_color(date_layer, GColorClear);
+  text_layer_set_text_color(date_layer, GColorBlack);
+  text_layer_set_text(date_layer, "00/00");
+
+  text_layer_set_font(date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(date_layer, GTextAlignmentRight);
+}
+
+static void date_layer_destroy(){
+  text_layer_destroy(date_layer);
+}
 
 static void update_time(){
   time_t current_time = time(NULL);
@@ -30,13 +44,16 @@ static void update_time(){
 
 static void main_window_load(){
   time_layer_create();
+  date_layer_create();
 
   update_time();
 
+  layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(time_layer));
 }
 
 static void main_window_unload(){
+  date_layer_destroy();
   time_layer_destroy();
 }
 
