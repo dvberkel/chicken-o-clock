@@ -9,6 +9,14 @@ static Layer *chicken_layer;
 
 static int battery_level;
 
+typedef struct Chicken {
+  int x;
+  int y;
+  int radius;
+} Chicken;
+
+static Chicken chicken = { .x = 72, .y = 72, .radius = 40 };
+
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
   text_layer_set_background_color(time_layer, GColorClear);
@@ -74,10 +82,9 @@ static void battery_layer_destroy(){
 static void chicken_draw(Layer *layer, GContext *ctx){
   GRect bounds = layer_get_bounds(layer);
 
-  GPoint origin = GPoint(72, 145 - 72);
-  int radius = 40;
+  GPoint origin = GPoint(chicken.x, chicken.y);
 
-  graphics_draw_circle(ctx, origin, radius);
+  graphics_draw_circle(ctx, origin, chicken.radius);
 }
 
 static void chicken_layer_create(){
