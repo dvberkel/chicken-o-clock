@@ -6,6 +6,8 @@ static TextLayer *date_layer;
 static TextLayer *week_layer;
 static Layer *battery_layer;
 
+static int battery_level;
+
 static void time_layer_create(){
   time_layer = text_layer_create(GRect(48, 148, 48, 20));
   text_layer_set_background_color(time_layer, GColorClear);
@@ -51,8 +53,12 @@ static void week_layer_destroy(){
 static void battery_level_draw(Layer *layer, GContext *ctx) {
   GRect bounds = layer_get_bounds(layer);
 
+  int width = (int)(((float)battery_level / 100.0F) * (float) bounds.size.w);
+  int x = (bounds.size.w - width) / 2;
+  GRect bar = GRect(x, bounds.origin.y, width, bounds.size.h);
+
   graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, bounds, 1, GCornersAll);
+  graphics_fill_rect(ctx, bar, 1, GCornersAll);
 }
 
 static void battery_layer_create(){
@@ -125,6 +131,11 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed){
   update();
 }
 
+static void battery_handler(BatteryChargeState state){
+  battery_level = state.charge_percent;
+  layer_mark_dirty(battery_layer);
+}
+
 static void init(){
   main_window = window_create();
 
@@ -134,8 +145,11 @@ static void init(){
   });
 
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  battery_state_service_subscribe(battery_handler);
 
   window_stack_push(main_window, true);
+
+  battery_handler(battery_state_service_peek());
 }
 
 static void deinit(){
