@@ -5,6 +5,7 @@ static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *week_layer;
 static Layer *battery_layer;
+static Layer *chicken_layer;
 
 static int battery_level;
 
@@ -70,6 +71,19 @@ static void battery_layer_destroy(){
   layer_destroy(battery_layer);
 }
 
+static void chicken_draw(Layer *layer, GContext *ctx){
+  /* nothing to see here */
+}
+
+static void chicken_layer_create(){
+  chicken_layer = layer_create(GRect(0, 0, 144, 145));
+  layer_set_update_proc(chicken_layer, chicken_draw);
+}
+
+static void chicken_layer_destroy(){
+  layer_destroy(chicken_layer);
+}
+
 static void update_time(){
   time_t current_time = time(NULL);
   struct tm *tick_time = localtime(&current_time);
@@ -111,6 +125,7 @@ static void main_window_load(){
   date_layer_create();
   week_layer_create();
   battery_layer_create();
+  chicken_layer_create();
 
   update();
 
@@ -118,9 +133,11 @@ static void main_window_load(){
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(week_layer));
   layer_add_child(window_get_root_layer(main_window), battery_layer);
+  layer_add_child(window_get_root_layer(main_window), chicken_layer);
 }
 
 static void main_window_unload(){
+  chicken_layer_destroy();
   battery_layer_destroy();
   week_layer_destroy();
   date_layer_destroy();
