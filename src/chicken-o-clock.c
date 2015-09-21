@@ -19,6 +19,8 @@ typedef struct Chicken {
   int eye_size;
   int left_eye;
   int wing_size;
+  int leg_size;
+  int leg_angle;
 } Chicken;
 
 static Chicken chicken = {
@@ -30,7 +32,9 @@ static Chicken chicken = {
   .beak_angle = TRIG_MAX_ANGLE/20,
   .eye_size = 3,
   .left_eye = 30,
-  .wing_size = 15
+  .wing_size = 15,
+  .leg_size = 15,
+  .leg_angle = TRIG_MAX_ANGLE/40
 };
 
 static void time_layer_create(){
@@ -134,6 +138,16 @@ static void chicken_draw(Layer *layer, GContext *ctx){
 
   graphics_draw_line(ctx, wing_start, wing_tip);
   graphics_draw_line(ctx, wing_tip, wing_end);
+
+  int leg_offset = (chicken.radius * cos_lookup(chicken.leg_angle))/TRIG_MAX_RATIO;
+  int leg_seperation = (chicken.radius * sin_lookup(chicken.leg_angle))/TRIG_MAX_RATIO;
+  GPoint left_leg_start = GPoint(chicken.x - leg_seperation, chicken.y + leg_offset);
+  GPoint left_leg_end = GPoint(chicken.x - leg_seperation, chicken.y + leg_offset + chicken.leg_size);
+  GPoint right_leg_start = GPoint(chicken.x + leg_seperation, chicken.y + leg_offset);
+  GPoint right_leg_end = GPoint(chicken.x + leg_seperation, chicken.y + leg_offset + chicken.leg_size);
+
+  graphics_draw_line(ctx, left_leg_start, left_leg_end);
+  graphics_draw_line(ctx, right_leg_start, right_leg_end);
 
   graphics_draw_circle(ctx, origin, chicken.radius);
 }
