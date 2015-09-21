@@ -25,7 +25,7 @@ typedef struct Chicken {
 
 static Chicken chicken = {
   .x = 72,
-  .y = 72,
+  .y = 90,
   .radius = 40,
   .tail_height = 40,
   .beak_size = 15,
