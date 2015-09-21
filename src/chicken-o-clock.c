@@ -25,7 +25,7 @@ typedef struct Chicken {
 
 static Chicken chicken = {
   .x = 72,
-  .y = 90,
+  .y = 50,
   .radius = 40,
   .tail_height = 40,
   .beak_size = 15,
@@ -151,7 +151,7 @@ static void chicken_draw(Layer *layer, GContext *ctx){
 }
 
 static void chicken_layer_create(){
-  chicken_layer = layer_create(GRect(0, 0, 144, 145));
+  chicken_layer = layer_create(GRect(0, 50, 144, 95));
   layer_set_update_proc(chicken_layer, chicken_draw);
 }
 
