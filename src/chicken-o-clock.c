@@ -100,8 +100,6 @@ static void battery_layer_destroy(){
 }
 
 static void chicken_draw(Layer *layer, GContext *ctx){
-  GRect bounds = layer_get_bounds(layer);
-
   GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
   GPoint tail_tip = GPoint(chicken.x + chicken.radius, chicken.y - chicken.tail_height);
 
