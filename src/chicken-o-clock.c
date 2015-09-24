@@ -7,6 +7,7 @@ static TextLayer *week_layer;
 static Layer *battery_layer;
 static Layer *connection_layer;
 static Layer *chicken_layer;
+static Layer *egg_animation_layer;
 
 static bool connection_status;
 static int battery_level;
@@ -23,6 +24,7 @@ typedef struct Chicken {
   int wing_size;
   int leg_size;
   int leg_angle;
+  int egg_radius;
 } Chicken;
 
 static Chicken chicken = {
@@ -36,7 +38,8 @@ static Chicken chicken = {
   .left_eye = 30,
   .wing_size = 15,
   .leg_size = 15,
-  .leg_angle = TRIG_MAX_ANGLE/40
+  .leg_angle = TRIG_MAX_ANGLE/40,
+  .egg_radius = 10
 };
 
 static void time_layer_create(){
@@ -184,6 +187,27 @@ static void chicken_layer_destroy(){
   layer_destroy(chicken_layer);
 }
 
+static void egg_animation_draw(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+  GPoint origin = GPoint(bounds.origin.x + bounds.size.w/2, bounds.origin.y + bounds.size.h/2);
+
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_circle(ctx, origin, chicken.egg_radius - 1);
+}
+
+static void egg_animation_layer_create(){
+  egg_animation_layer = layer_create(GRect(
+      chicken.x,
+      chicken.y + 2 * chicken.radius + chicken.leg_size - 2 * chicken.egg_radius,
+      2 * chicken.egg_radius,
+      2 * chicken.egg_radius));
+  layer_set_update_proc(egg_animation_layer, egg_animation_draw);
+}
+
+static void egg_animation_layer_destroy(){
+  layer_destroy(egg_animation_layer);
+}
+
 static void update_time(){
   time_t current_time = time(NULL);
   struct tm *tick_time = localtime(&current_time);
@@ -227,6 +251,7 @@ static void main_window_load(){
   battery_layer_create();
   connection_layer_create();
   chicken_layer_create();
+  egg_animation_layer_create();
 
   update();
 
@@ -236,6 +261,7 @@ static void main_window_load(){
   layer_add_child(window_get_root_layer(main_window), battery_layer);
   layer_add_child(window_get_root_layer(main_window), connection_layer);
   layer_add_child(window_get_root_layer(main_window), chicken_layer);
+  layer_add_child(window_get_root_layer(main_window), egg_animation_layer);
 }
 
 static void main_window_unload(){
@@ -245,6 +271,7 @@ static void main_window_unload(){
   week_layer_destroy();
   date_layer_destroy();
   time_layer_destroy();
+  egg_animation_layer_destroy();
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed){
