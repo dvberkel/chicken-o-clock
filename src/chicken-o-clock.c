@@ -8,9 +8,12 @@ static Layer *battery_layer;
 static Layer *connection_layer;
 static Layer *chicken_layer;
 static Layer *egg_animation_layer;
+static PropertyAnimation *egg_animation;
+static GRect egg_origin;
 
 static bool connection_status;
 static int battery_level;
+
 
 typedef struct Chicken {
   int x;
@@ -196,11 +199,12 @@ static void egg_animation_draw(Layer *layer, GContext *ctx) {
 }
 
 static void egg_animation_layer_create(){
-  egg_animation_layer = layer_create(GRect(
-      chicken.x,
+  egg_origin = GRect(
+      144,
       chicken.y + 2 * chicken.radius + chicken.leg_size - 2 * chicken.egg_radius,
       2 * chicken.egg_radius,
-      2 * chicken.egg_radius));
+      2 * chicken.egg_radius);
+  egg_animation_layer = layer_create(egg_origin);
   layer_set_update_proc(egg_animation_layer, egg_animation_draw);
 }
 
@@ -288,6 +292,34 @@ static void battery_handler(BatteryChargeState state){
   layer_mark_dirty(battery_layer);
 }
 
+static void egg_animation_started(Animation *animation, void *data){
+  /**/
+}
+
+static void egg_animation_stopped(Animation *animation, bool finished, void *data){
+  /**/
+  property_animation_destroy((PropertyAnimation *)animation);
+
+  if (!finished){
+    layer_set_frame(egg_animation_layer, egg_origin);
+    layer_mark_dirty(egg_animation_layer);
+  }
+}
+
+static void tap_handler(AccelAxisType axis, int32_t diretion){
+  GRect from_frame = GRect(chicken.x, egg_origin.origin.y, egg_origin.size.w, egg_origin.size.h);
+  GRect to_frame = egg_origin;
+
+  egg_animation = property_animation_create_layer_frame(egg_animation_layer, &from_frame, &to_frame);
+  animation_set_handlers((Animation *) egg_animation, (AnimationHandlers) {
+      .started = (AnimationStartedHandler) egg_animation_started,
+      .stopped = (AnimationStoppedHandler) egg_animation_stopped
+  }, NULL);
+  animation_set_duration((Animation *) egg_animation, 2000);
+
+  animation_schedule((Animation*) egg_animation);
+}
+
 static void init(){
   main_window = window_create();
 
@@ -299,6 +331,7 @@ static void init(){
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   bluetooth_connection_service_subscribe(connection_handler);
   battery_state_service_subscribe(battery_handler);
+  accel_tap_service_subscribe(tap_handler);
 
   window_stack_push(main_window, true);
 
