@@ -5,8 +5,10 @@ static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *week_layer;
 static Layer *battery_layer;
+static Layer *connection_layer;
 static Layer *chicken_layer;
 
+static bool connection_status;
 static int battery_level;
 
 typedef struct Chicken {
@@ -98,6 +100,29 @@ static void battery_layer_create(){
 static void battery_layer_destroy(){
   layer_destroy(battery_layer);
 }
+
+static void connection_level_draw(Layer *layer, GContext *ctx) {
+  GRect bounds = layer_get_bounds(layer);
+
+  GColor color;
+  if (connection_status) {
+    color = GColorBlack;
+  } else {
+    color = GColorWhite;
+  }
+  graphics_context_set_fill_color(ctx, color);
+  graphics_fill_rect(ctx, bounds, 1, GCornersAll);
+}
+
+static void connection_layer_create(){
+  connection_layer = layer_create(GRect(0, 23, 144, 2));
+  layer_set_update_proc(connection_layer, connection_level_draw);
+}
+
+static void connection_layer_destroy(){
+  layer_destroy(connection_layer);
+}
+
 
 static void chicken_draw(Layer *layer, GContext *ctx){
   GPoint tail_start = GPoint(chicken.x + chicken.radius, chicken.y);
@@ -200,6 +225,7 @@ static void main_window_load(){
   date_layer_create();
   week_layer_create();
   battery_layer_create();
+  connection_layer_create();
   chicken_layer_create();
 
   update();
@@ -208,11 +234,13 @@ static void main_window_load(){
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(date_layer));
   layer_add_child(window_get_root_layer(main_window), text_layer_get_layer(week_layer));
   layer_add_child(window_get_root_layer(main_window), battery_layer);
+  layer_add_child(window_get_root_layer(main_window), connection_layer);
   layer_add_child(window_get_root_layer(main_window), chicken_layer);
 }
 
 static void main_window_unload(){
   chicken_layer_destroy();
+  connection_layer_destroy();
   battery_layer_destroy();
   week_layer_destroy();
   date_layer_destroy();
@@ -221,6 +249,11 @@ static void main_window_unload(){
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed){
   update();
+}
+
+static void connection_handler(bool connected){
+  connection_status = connected;
+  layer_mark_dirty(connection_layer);
 }
 
 static void battery_handler(BatteryChargeState state){
@@ -237,10 +270,12 @@ static void init(){
   });
 
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  bluetooth_connection_service_subscribe(connection_handler);
   battery_state_service_subscribe(battery_handler);
 
   window_stack_push(main_window, true);
 
+  connection_handler(bluetooth_connection_service_peek());
   battery_handler(battery_state_service_peek());
 }
 
