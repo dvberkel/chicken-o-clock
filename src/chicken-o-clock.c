@@ -13,7 +13,6 @@ static GRect egg_origin;
 static bool connection_status;
 static int battery_level;
 
-
 typedef struct Chicken {
   int x;
   int y;
