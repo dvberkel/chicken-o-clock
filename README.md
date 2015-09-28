@@ -8,7 +8,9 @@ One day my daughter was watching [Peppa Pig][peppa-pig]. In that episode Peppa e
 
 * **resolution** *144x168*
 * **publishing** [*Guide how to publish*][publish]
+* **wikipedia** [*Pebble on Wikipedia*][wikipedia]
 
 [pebble]: https://getpebble.com/
 [peppa-pig]: http://peppapig.com
 [publish]: http://developer.getpebble.com/guides/publishing-tools/publish-to-pebble-appstore/
+[wikipedia]: https://en.wikipedia.org/wiki/Pebble_%28watch%29
